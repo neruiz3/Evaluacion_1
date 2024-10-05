@@ -10,7 +10,7 @@ public class SimulacionService {
 
     @Autowired
     SimulacionRepository simulacionRepository;
-
+//Hay que poner condiciones en cuanto al monto y el resto de parametros? o es se pone en otro lado??
     public void calculaSimulacion (int monto, int plazo, double tasaInteres, String tipoPrestamo){
         SimulacionEntity simulacion = new SimulacionEntity();
         simulacion.setMonto(monto);
@@ -19,7 +19,7 @@ public class SimulacionService {
         simulacion.setTipoPrestamo(tipoPrestamo);
         simulacion.setCuotaMensual(calcularCuotaMensual(simulacion));
 
-        //ya se han establecido los valores de la simulacion, así que ahora lo guardamos
+        //ya se han establecido los valores de la simulacion, así que ahora lo guardamos en la BBDD
         simulacionRepository.save(simulacion);
     }
 

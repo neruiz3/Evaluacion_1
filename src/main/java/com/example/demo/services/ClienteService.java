@@ -1,4 +1,5 @@
 package com.example.demo.services;
+import com.example.demo.entities.ClienteEntity;
 import com.example.demo.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -7,6 +8,11 @@ import org.springframework.stereotype.Service;
 public class ClienteService {
     @Autowired
     ClienteRepository clienteRepository;
-    //aquí tengo que tener una funcion que me devuelva la cuota mensual me imagino, osea que llame a simulation service
+
+    public ClienteEntity guardaCliente(ClienteEntity cliente){
+        return clienteRepository.save(cliente);
+    }
+
+
 
 }
