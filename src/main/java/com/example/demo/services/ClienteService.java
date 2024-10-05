@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 public class ClienteService {
     @Autowired
     ClienteRepository clienteRepository;
-
+    //aquí tengo que tener una funcion que me devuelva la cuota mensual me imagino, osea que llame a simulation service
 
 }

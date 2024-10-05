@@ -1,18 +1,37 @@
 package com.example.demo.services;
 
+import com.example.demo.entities.SimulacionEntity;
+import com.example.demo.repositories.SimulacionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SimulacionService {
-    public double calcularCuotaMensual(int monto, BigDecimal tasaInteres, int plazoAnios) {
-        // Fórmula para el cálculo de la cuota mensual (hipoteca):
-        // M = P[r(1+r)^n]/[(1+r)^n-1]
-        BigDecimal cuotaMensual;
-        int n = plazoAnios * 12; // Total de meses
-        BigDecimal r = tasaInteres.divide(BigDecimal.valueOf(100)).divide(BigDecimal.valueOf(12), RoundingMode.HALF_UP);
 
-        cuotaMensual = monto.multiply(r.multiply(BigDecimal.ONE.add(r).pow(n)))
-                .divide(BigDecimal.ONE.add(r).pow(n).subtract(BigDecimal.ONE), RoundingMode.HALF_UP);
-        return cuotaMensual;
+    @Autowired
+    SimulacionRepository simulacionRepository;
+
+    public void calculaSimulacion (int monto, int plazo, double tasaInteres, String tipoPrestamo){
+        SimulacionEntity simulacion = new SimulacionEntity();
+        simulacion.setMonto(monto);
+        simulacion.setPlazo(plazo);
+        simulacion.setTasaInteres(tasaInteres);
+        simulacion.setTipoPrestamo(tipoPrestamo);
+        simulacion.setCuotaMensual(calcularCuotaMensual(simulacion));
+
+        //ya se han establecido los valores de la simulacion, así que ahora lo guardamos
+        simulacionRepository.save(simulacion);
     }
+
+    private double calcularCuotaMensual(SimulacionEntity simulacion) {
+        int n = simulacion.getPlazo() * 12; // numero total de pagos
+        double r = simulacion.getTasaInteres() / 12 / 100; //tasa de interes mensual
+        int p = simulacion.getMonto();
+        // M = P[r(1+r)^n]/[(1+r)^n-1]
+        return ((p*r*Math.pow((1+r),n))/(Math.pow((1+r),n)-1));
+    }
+
+
+
+
 }

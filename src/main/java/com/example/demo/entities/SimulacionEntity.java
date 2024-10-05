@@ -18,10 +18,10 @@ public class SimulacionEntity {
     @Column(unique = true, nullable = false)
 
     private Long id;
-    private String rut; //para saber el cliente que ha solicitado ese credito
+   // private String rut; //para saber el cliente que ha solicitado ese credito, no se si hace fala realmente
     private int plazo;
     private double tasaInteres;
     private int monto;
     private String tipoPrestamo;
-
+    private double cuotaMensual;
 }
