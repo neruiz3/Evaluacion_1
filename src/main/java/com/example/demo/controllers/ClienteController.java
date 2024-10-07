@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@RequestMapping("/api/v1/employees") hay que cambiar esto a lo mio
+@RequestMapping("/api/v1/cliente")
 @CrossOrigin("*")
 public class ClienteController {
     @Autowired
