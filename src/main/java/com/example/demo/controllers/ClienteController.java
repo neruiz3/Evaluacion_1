@@ -15,7 +15,7 @@ public class ClienteController {
 
     @PostMapping("/")
     public ResponseEntity<ClienteEntity> nuevoCliente(@RequestBody ClienteEntity cliente) {
-        ClienteEntity nuevoCliente = ClienteService.guardaCliente(cliente);
+        ClienteEntity nuevoCliente = clienteService.guardaCliente(cliente);
         return ResponseEntity.ok(nuevoCliente);
     }
 

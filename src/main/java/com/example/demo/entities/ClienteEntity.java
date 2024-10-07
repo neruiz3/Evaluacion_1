@@ -19,8 +19,6 @@ public class ClienteEntity {
 
     private Long id;
     private String rut;
-    private String name;
-    private int salary;
-    private int children;
-    private String category;
+    private String nombre;
+
 }
