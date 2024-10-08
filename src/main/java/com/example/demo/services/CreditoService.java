@@ -29,6 +29,10 @@ public class CreditoService {
 
     }
 
+    public CreditoEntity creaExpediente(CreditoEntity solicitud){
+        return creditoRepository.save(solicitud);
+    }
+
     private double calcularCuotaMensual(CreditoEntity simulacion) {
         int n = simulacion.getPlazo() * 12; // numero total de pagos
         double r = simulacion.getTasaInteres() / 12.0 / 100.0; //tasa de interes mensual
