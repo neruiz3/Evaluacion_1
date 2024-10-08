@@ -24,5 +24,6 @@ public class SimulacionEntity {
     private double tasaInteres;
     private double monto;
     private TipoPrestamo tipoPrestamo;
+    private double valorPropiedad;
     private double cuotaMensual; // no estoy segura de que haya que incluir aqui la cuota mensual
 }
