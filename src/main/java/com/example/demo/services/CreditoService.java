@@ -1,7 +1,9 @@
 package com.example.demo.services;
 
 import com.example.demo.TipoPrestamo;
+import com.example.demo.entities.ClienteEntity;
 import com.example.demo.entities.CreditoEntity;
+import com.example.demo.repositories.ClienteRepository;
 import com.example.demo.repositories.CreditoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,9 +12,11 @@ import org.springframework.stereotype.Service;
 public class CreditoService {
     @Autowired
     CreditoRepository creditoRepository;
+    @Autowired
+    ClienteRepository clienteRepository;
 
     //Hay que poner condiciones en cuanto al monto y el resto de parametros? o es se pone en otro lado??
-    public void calculaSimulacion (double monto, int plazo, double tasaInteres,
+    public double calculaSimulacion (double monto, int plazo, double tasaInteres,
                                    TipoPrestamo tipoPrestamo, double valorPropiedad){
         CreditoEntity simulacion = new CreditoEntity();
 
@@ -22,26 +26,114 @@ public class CreditoService {
         simulacion.setTipoPrestamo(tipoPrestamo);
         simulacion.setValorPropiedad(valorPropiedad);
 
-        if(validarSimulacion(simulacion)){
-            simulacion.setCuotaMensual(calcularCuotaMensual(simulacion));
-           creditoRepository.save(simulacion); //ya se han establecido los valores de la simulacion, así que ahora lo guardamos en la BBDD
+        if(validacion(simulacion)){
+            simulacion.setCuotaMensual(calcularCuotaMensual(simulacion.getPlazo(),
+                    simulacion.getTasaInteres(), simulacion.getMonto()));
         }
 
+        return simulacion.getCuotaMensual(); //ya se han establecido los valores de la simulacion, así que ahora lo guardamos en la BBDD
     }
 
     public CreditoEntity creaExpediente(CreditoEntity solicitud){
         return creditoRepository.save(solicitud);
     }
 
-    private double calcularCuotaMensual(CreditoEntity simulacion) {
-        int n = simulacion.getPlazo() * 12; // numero total de pagos
-        double r = simulacion.getTasaInteres() / 12.0 / 100.0; //tasa de interes mensual
-        double p = simulacion.getMonto();
+    public boolean evaluacionCredito (CreditoEntity credito){
+        credito.setCuotaMensual(calcularCuotaMensual(credito.getPlazo(), credito.getTasaInteres(), credito.getMonto()));
+        ClienteEntity cliente = clienteRepository.findByRut(credito.getRut());
+
+        double cuotaIngreso = credito.getCuotaMensual()/cliente.getIngresos()*100.0;
+        if(cuotaIngreso > 35.0){
+            return false;
+        }
+
+        if(cliente.isEsMoroso()){
+            return false;
+        }
+
+        if(cliente.isEsIndependiente()){
+            if(!cliente.isEsEstable()){
+                return false;
+            }
+        }
+        else{
+            if(cliente.getAntiguedadLaboral()<1){
+                return false;
+            }
+        }
+
+        double deuda = cliente.getDeudaTotal()+credito.getCuotaMensual();
+        if(deuda > 0.5*cliente.getIngresos()){
+            return false;
+        }
+
+        if(!(validacion(credito))){
+            return false;
+        }
+
+        int edadFutura = cliente.getEdad()+credito.getPlazo();
+        if(edadFutura>70){
+            return false;
+        }
+
+        //capacidad de ahorro
+        int requisitos = calculaCapacidadAhorro(cliente,credito);
+        //evaluamos los requisitos
+        if(requisitos == 5){
+            cliente.setCapacidadAhorro("solida"); //continuar con la evaluacion
+        } else if (requisitos < 3) {
+            cliente.setCapacidadAhorro("insuficiente"); //revision adicional
+        } else {
+            cliente.setCapacidadAhorro("moderada"); //rechazar
+        }
+        return true;
+    }
+
+    private int calculaCapacidadAhorro(ClienteEntity cliente, CreditoEntity credito){
+        int requisitos = 0;
+
+        //saldo minimo
+        if (cliente.getSaldo()>=0.1*credito.getMonto()){
+            requisitos++;
+        }
+        //historial de ahorro  --> saldo positivo en su cuenta de ahorros durante los últimos 12 meses
+        //sin retiros > 50% del saldo.
+        if(cliente.isSaldoPositivo()){
+            if(cliente.getMayorRetiro12()>cliente.getSaldo()*0.5){
+                requisitos++;
+            }
+        }
+        //depositos periodicos
+        if(cliente.isDepositoRegular()){
+            if(cliente.getTotalDepositos()>=0.05*cliente.getIngresos()){
+                requisitos++;
+            }
+        }
+        //relacion saldo/años de antiguedad
+        double porcentaje = 0.1;
+        if(cliente.getTiempoCuentaAhorros()<2){
+            porcentaje = 0.2;
+        }
+        if(cliente.getSaldo()>credito.getMonto()*porcentaje){
+            requisitos++;
+        }
+        //retiros recientes, no se si habria que hacerlo asi o obteniendo de una base de datos los retiros
+        if((cliente.getMayorRetiro6()<= cliente.getSaldo()*0.3)) {
+            requisitos++;
+        }
+    return requisitos;
+    }
+
+
+    private double calcularCuotaMensual(int plazo, double tasaInteres, double monto) {
+        int n = plazo * 12; // numero total de pagos
+        double r = tasaInteres / 12.0 / 100.0; //tasa de interes mensual
+        double p = monto;
         // M = P[r(1+r)^n]/[(1+r)^n-1]
         return ((p*r*Math.pow((1+r),n))/(Math.pow((1+r),n)-1));
     }
 
-    public boolean validarSimulacion(CreditoEntity simulacion) {
+    public boolean validacion(CreditoEntity simulacion) {
         // Validar el plazo
         if (simulacion.getPlazo() > simulacion.getTipoPrestamo().getPlazoMaximo()) {
             throw new IllegalArgumentException("El plazo excede el máximo permitido para este tipo de préstamo.");

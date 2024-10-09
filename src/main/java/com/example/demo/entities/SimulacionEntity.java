@@ -7,12 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "creditos")
+@Table(name = "simulaciones") //no se si hay que crear una base de datos con las simulaciones en realidad
 @Data //genera automaticamente los getters y setters
 @NoArgsConstructor //genera un constructor sin argumentos para la clase
 @AllArgsConstructor //constructor con todos los argumentos de la clase, por si se los pasas
-public class CreditoEntity {
-
+public class SimulacionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
@@ -25,5 +24,4 @@ public class CreditoEntity {
     private TipoPrestamo tipoPrestamo;
     private double valorPropiedad;
     private double cuotaMensual; // no estoy segura de que haya que incluir aqui la cuota mensual
-    private String estado;
 }
