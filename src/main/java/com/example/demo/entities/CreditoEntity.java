@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import com.example.demo.Estado;
 import com.example.demo.TipoPrestamo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,6 @@ public class CreditoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-
     private Long id;
     private String rut; //para saber el cliente que ha solicitado ese credito, no se si hace fala realmente
     private int plazo;
@@ -25,5 +25,5 @@ public class CreditoEntity {
     private TipoPrestamo tipoPrestamo;
     private double valorPropiedad;
     private double cuotaMensual; // no estoy segura de que haya que incluir aqui la cuota mensual
-    private String estado;
+    private Estado estado;
 }

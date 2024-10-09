@@ -2,7 +2,6 @@ package com.example.demo.controllers;
 
 import com.example.demo.TipoPrestamo;
 import com.example.demo.entities.CreditoEntity;
-import com.example.demo.entities.SimulacionEntity;
 import com.example.demo.services.CreditoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +23,20 @@ public class CreditoController {
     }
 
     @GetMapping("/calculaSimulacion")
-    public ResponseEntity<Double> calculaSimulacion(@RequestParam("monto") double monto, @RequestParam("plazo") int plazo,
+    public ResponseEntity<CreditoEntity> calculaSimulacion(@RequestParam("monto") double monto, @RequestParam("plazo") int plazo,
                                                               @RequestParam("tasaInteres") double tasaInteres,
-                                                              @RequestParam("tipoPrestamo") TipoPrestamo tipoPrestamo,
-                                                              @RequestParam("valorPropiedad") double valorPropiedad) {
-        double cuotaMensual = creditoService.calculaSimulacion(monto, plazo, tasaInteres, tipoPrestamo, valorPropiedad);
-        return ResponseEntity.ok(cuotaMensual);
+                                                              @RequestParam("tipoPrestamo") TipoPrestamo tipoPrestamo) {
+        CreditoEntity credito = creditoService.calculaSimulacion(monto, plazo, tasaInteres, tipoPrestamo);
+        return ResponseEntity.ok(credito);
+    }
+
+    public ResponseEntity<CreditoEntity> revisionInicial(@RequestBody CreditoEntity credito) {
+        CreditoEntity creditoRevisadoInicial = creditoService.revisionInicial(credito);
+        return ResponseEntity.ok(creditoRevisadoInicial);
+    }
+
+    public ResponseEntity<CreditoEntity> evaluaCredito(@RequestBody CreditoEntity credito) {
+        CreditoEntity creditoEvaluado = creditoService.evaluacionCredito(credito);
+        return ResponseEntity.ok(creditoEvaluado);
     }
 }

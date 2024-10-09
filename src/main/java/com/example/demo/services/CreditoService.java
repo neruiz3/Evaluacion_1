@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.Estado;
 import com.example.demo.TipoPrestamo;
 import com.example.demo.entities.ClienteEntity;
 import com.example.demo.entities.CreditoEntity;
@@ -14,66 +15,85 @@ public class CreditoService {
     CreditoRepository creditoRepository;
     @Autowired
     ClienteRepository clienteRepository;
+    @Autowired
+    DocumentacionService documentacionService;
 
     //Hay que poner condiciones en cuanto al monto y el resto de parametros? o es se pone en otro lado??
-    public double calculaSimulacion (double monto, int plazo, double tasaInteres,
-                                   TipoPrestamo tipoPrestamo, double valorPropiedad){
+    public CreditoEntity calculaSimulacion (double monto, int plazo, double tasaInteres, TipoPrestamo tipoPrestamo){
         CreditoEntity simulacion = new CreditoEntity();
 
         simulacion.setMonto(monto);
         simulacion.setPlazo(plazo);
         simulacion.setTasaInteres(tasaInteres);
         simulacion.setTipoPrestamo(tipoPrestamo);
-        simulacion.setValorPropiedad(valorPropiedad);
+        simulacion.setCuotaMensual(calcularCuotaMensual(plazo, tasaInteres, monto));
 
-        if(validacion(simulacion)){
-            simulacion.setCuotaMensual(calcularCuotaMensual(simulacion.getPlazo(),
-                    simulacion.getTasaInteres(), simulacion.getMonto()));
-        }
-
-        return simulacion.getCuotaMensual(); //ya se han establecido los valores de la simulacion, así que ahora lo guardamos en la BBDD
+        return simulacion; //ya se han establecido los valores de la simulacion
     }
 
     public CreditoEntity creaExpediente(CreditoEntity solicitud){
+        solicitud.setEstado(Estado.EN_REVISION_INICIAL);
         return creditoRepository.save(solicitud);
     }
 
-    public boolean evaluacionCredito (CreditoEntity credito){
+    public CreditoEntity revisionInicial (CreditoEntity credito){
+        //verificar que se han completado los campos y adjuntado los documentos necesarios
+        //plazo maximo
+        //tasa de interes anual
+        //documentacion
+        //piden un monto
+        if(documentacionService.compruebaDocumentos(credito.getTipoPrestamo(), credito.getRut())){
+            credito.setEstado(Estado.EN_EVALUACION);
+        }
+        else {
+            credito.setEstado(Estado.PENDIENTE_DOCUMENTACION);
+        }
+
+    }
+
+    public CreditoEntity evaluacionCredito (CreditoEntity credito){
         credito.setCuotaMensual(calcularCuotaMensual(credito.getPlazo(), credito.getTasaInteres(), credito.getMonto()));
         ClienteEntity cliente = clienteRepository.findByRut(credito.getRut());
 
         double cuotaIngreso = credito.getCuotaMensual()/cliente.getIngresos()*100.0;
         if(cuotaIngreso > 35.0){
-            return false;
+            credito.setEstado(Estado.RECHAZADA);
+            return credito;
         }
 
         if(cliente.isEsMoroso()){
-            return false;
+            credito.setEstado(Estado.RECHAZADA);
+            return credito;
         }
 
         if(cliente.isEsIndependiente()){
             if(!cliente.isEsEstable()){
-                return false;
+                credito.setEstado(Estado.RECHAZADA);
+                return credito;
             }
         }
         else{
             if(cliente.getAntiguedadLaboral()<1){
-                return false;
+                credito.setEstado(Estado.RECHAZADA);
+                return credito;
             }
         }
 
         double deuda = cliente.getDeudaTotal()+credito.getCuotaMensual();
         if(deuda > 0.5*cliente.getIngresos()){
-            return false;
+            credito.setEstado(Estado.RECHAZADA);
+            return credito;
         }
 
         if(!(validacion(credito))){
-            return false;
+            credito.setEstado(Estado.RECHAZADA);
+            return credito;
         }
 
         int edadFutura = cliente.getEdad()+credito.getPlazo();
         if(edadFutura>70){
-            return false;
+            credito.setEstado(Estado.RECHAZADA);
+            return credito;
         }
 
         //capacidad de ahorro
@@ -81,12 +101,16 @@ public class CreditoService {
         //evaluamos los requisitos
         if(requisitos == 5){
             cliente.setCapacidadAhorro("solida"); //continuar con la evaluacion
+            credito.setEstado(Estado.PRE_APROBADA);
         } else if (requisitos < 3) {
             cliente.setCapacidadAhorro("insuficiente"); //revision adicional
+            credito.setEstado(Estado.RECHAZADA);
         } else {
             cliente.setCapacidadAhorro("moderada"); //rechazar
+            credito.setEstado(Estado.EN_EVALUACION);
         }
-        return true;
+        creditoRepository.save(credito);
+        return credito;
     }
 
     private int calculaCapacidadAhorro(ClienteEntity cliente, CreditoEntity credito){

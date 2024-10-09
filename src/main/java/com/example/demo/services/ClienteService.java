@@ -13,7 +13,7 @@ public class ClienteService {
         return clienteRepository.save(cliente);
     }
 
-    public ClienteEntity getEmployeeByRut(String rut){
+    public ClienteEntity getClienteByRut(String rut){
         return clienteRepository.findByRut(rut);
     }
 
