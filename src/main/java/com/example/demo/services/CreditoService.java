@@ -1,7 +1,6 @@
 package com.example.demo.services;
 
 import com.example.demo.Estado;
-import com.example.demo.TipoPrestamo;
 import com.example.demo.entities.ClienteEntity;
 import com.example.demo.entities.CreditoEntity;
 import com.example.demo.repositories.ClienteRepository;
@@ -19,15 +18,8 @@ public class CreditoService {
     DocumentacionService documentacionService;
 
     //Hay que poner condiciones en cuanto al monto y el resto de parametros? o es se pone en otro lado??
-    public CreditoEntity calculaSimulacion (double monto, int plazo, double tasaInteres, TipoPrestamo tipoPrestamo){
-        CreditoEntity simulacion = new CreditoEntity();
-
-        simulacion.setMonto(monto);
-        simulacion.setPlazo(plazo);
-        simulacion.setTasaInteres(tasaInteres);
-        simulacion.setTipoPrestamo(tipoPrestamo);
-        simulacion.setCuotaMensual(calcularCuotaMensual(plazo, tasaInteres, monto));
-
+    public CreditoEntity calculaSimulacion (CreditoEntity simulacion){
+        simulacion.setCuotaMensual(calcularCuotaMensual(simulacion.getPlazo(), simulacion.getTasaInteres(), simulacion.getMonto()));
         return simulacion; //ya se han establecido los valores de la simulacion
     }
 
@@ -43,13 +35,14 @@ public class CreditoService {
         //documentacion
         //piden un monto
         //yo creo que eso se podria hacer haciendo que cuandos se meta un credito a la base de datos no puedan estar vacios esos campos
+        credito.setMonto(calcularCuotaMensual(credito.getPlazo(), credito.getTasaInteres(), credito.getMonto()));
         if(documentacionService.compruebaDocumentos(credito.getTipoPrestamo(), credito.getRut())){
             credito.setEstado(Estado.EN_EVALUACION);
         }
         else {
             credito.setEstado(Estado.PENDIENTE_DOCUMENTACION);
         }
-        return credito;
+        return creditoRepository.save(credito);
     }
 
     public CreditoEntity evaluacionCredito (CreditoEntity credito){
@@ -104,8 +97,7 @@ public class CreditoService {
             cliente.setCapacidadAhorro("moderada"); //rechazar
             credito.setEstado(Estado.EN_EVALUACION);
         }
-        creditoRepository.save(credito);
-        return credito;
+        return creditoRepository.save(credito);
     }
 
     private int calculaCapacidadAhorro(ClienteEntity cliente, CreditoEntity credito){
@@ -175,10 +167,10 @@ public class CreditoService {
         if ((credito.getEstado() == Estado.PRE_APROBADA && nuevoEstado == Estado.EN_APROBACION_FINAL) ||
                 (credito.getEstado() == Estado.EN_APROBACION_FINAL && nuevoEstado == Estado.APROBADA) ||
                 (credito.getEstado() == Estado.APROBADA && nuevoEstado == Estado.EN_DESEMBOLSO)) {
-
             credito.setEstado(nuevoEstado);
+            creditoRepository.save(credito);
         } else {
-            throw new IllegalStateException("Cambio de estado no permitido desde " + this.estado + " a " + nuevoEstado);
+            throw new IllegalStateException("Cambio de estado no permitido desde " + credito.getEstado() + " a " + nuevoEstado);
         }
         creditoRepository.save(credito);
         return credito;
@@ -191,6 +183,14 @@ public class CreditoService {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
 
+    public double calculaCostoTotal (CreditoEntity credito){
+        //calculo cuota mensual, que ya deberia estar calculada porque nada mas crearlo se hace
+        double seguro = credito.getMonto()*0.03 + 20.0; //se suma tambien el de incendio que son 20 dolares
+        double admin = credito.getMonto()*0.01;
+        double costoMensual = credito.getCuotaMensual()+seguro;
+        double costoTotal = costoMensual*12+admin;
+        return costoTotal;
     }
 }

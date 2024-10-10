@@ -15,7 +15,7 @@ public class DocumentacionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Long id;
-    private String rutCliente;
+    private String rut;
     //comprobante de ingresos
     private byte[] comprobanteIngresos;
     //escritura primera vivienda

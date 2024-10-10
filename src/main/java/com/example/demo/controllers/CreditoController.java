@@ -24,10 +24,8 @@ public class CreditoController {
     }
 
     @GetMapping("/calculaSimulacion")
-    public ResponseEntity<CreditoEntity> calculaSimulacion(@RequestParam("monto") double monto, @RequestParam("plazo") int plazo,
-                                                              @RequestParam("tasaInteres") double tasaInteres,
-                                                              @RequestParam("tipoPrestamo") TipoPrestamo tipoPrestamo) {
-        CreditoEntity credito = creditoService.calculaSimulacion(monto, plazo, tasaInteres, tipoPrestamo);
+    public ResponseEntity<CreditoEntity> calculaSimulacion(@RequestBody CreditoEntity simulacion) {
+        CreditoEntity credito = creditoService.calculaSimulacion(simulacion);
         return ResponseEntity.ok(credito);
     }
 
@@ -41,7 +39,7 @@ public class CreditoController {
         CreditoEntity creditoEvaluado = creditoService.evaluacionCredito(credito);
         return ResponseEntity.ok(creditoEvaluado);
     }
-    
+
     @PutMapping("/aprueba/{estado}")
     public ResponseEntity<CreditoEntity> cambioEstado(@RequestBody CreditoEntity credito, @PathVariable Estado estado) {
         CreditoEntity creditoAprobado = creditoService.cambioEstado(credito, estado);
