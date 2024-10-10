@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.Estado;
 import com.example.demo.TipoPrestamo;
 import com.example.demo.entities.CreditoEntity;
 import com.example.demo.services.CreditoService;
@@ -30,13 +31,26 @@ public class CreditoController {
         return ResponseEntity.ok(credito);
     }
 
+    @PutMapping("/revisaInicial")
     public ResponseEntity<CreditoEntity> revisionInicial(@RequestBody CreditoEntity credito) {
         CreditoEntity creditoRevisadoInicial = creditoService.revisionInicial(credito);
         return ResponseEntity.ok(creditoRevisadoInicial);
     }
-
+    @PutMapping("/evalua")
     public ResponseEntity<CreditoEntity> evaluaCredito(@RequestBody CreditoEntity credito) {
         CreditoEntity creditoEvaluado = creditoService.evaluacionCredito(credito);
         return ResponseEntity.ok(creditoEvaluado);
+    }
+    
+    @PutMapping("/aprueba/{estado}")
+    public ResponseEntity<CreditoEntity> cambioEstado(@RequestBody CreditoEntity credito, @PathVariable Estado estado) {
+        CreditoEntity creditoAprobado = creditoService.cambioEstado(credito, estado);
+        return ResponseEntity.ok(creditoAprobado);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> eliminaId(@PathVariable Long id) throws Exception {
+        var isDeleted = creditoService.eliminaCredito(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -42,13 +42,14 @@ public class CreditoService {
         //tasa de interes anual
         //documentacion
         //piden un monto
+        //yo creo que eso se podria hacer haciendo que cuandos se meta un credito a la base de datos no puedan estar vacios esos campos
         if(documentacionService.compruebaDocumentos(credito.getTipoPrestamo(), credito.getRut())){
             credito.setEstado(Estado.EN_EVALUACION);
         }
         else {
             credito.setEstado(Estado.PENDIENTE_DOCUMENTACION);
         }
-
+        return credito;
     }
 
     public CreditoEntity evaluacionCredito (CreditoEntity credito){
@@ -60,12 +61,10 @@ public class CreditoService {
             credito.setEstado(Estado.RECHAZADA);
             return credito;
         }
-
         if(cliente.isEsMoroso()){
             credito.setEstado(Estado.RECHAZADA);
             return credito;
         }
-
         if(cliente.isEsIndependiente()){
             if(!cliente.isEsEstable()){
                 credito.setEstado(Estado.RECHAZADA);
@@ -78,24 +77,20 @@ public class CreditoService {
                 return credito;
             }
         }
-
         double deuda = cliente.getDeudaTotal()+credito.getCuotaMensual();
         if(deuda > 0.5*cliente.getIngresos()){
             credito.setEstado(Estado.RECHAZADA);
             return credito;
         }
-
         if(!(validacion(credito))){
             credito.setEstado(Estado.RECHAZADA);
             return credito;
         }
-
         int edadFutura = cliente.getEdad()+credito.getPlazo();
         if(edadFutura>70){
             credito.setEstado(Estado.RECHAZADA);
             return credito;
         }
-
         //capacidad de ahorro
         int requisitos = calculaCapacidadAhorro(cliente,credito);
         //evaluamos los requisitos
@@ -174,5 +169,28 @@ public class CreditoService {
         }
 
         return true;
+    }
+
+    public CreditoEntity cambioEstado(CreditoEntity credito, Estado nuevoEstado){
+        if ((credito.getEstado() == Estado.PRE_APROBADA && nuevoEstado == Estado.EN_APROBACION_FINAL) ||
+                (credito.getEstado() == Estado.EN_APROBACION_FINAL && nuevoEstado == Estado.APROBADA) ||
+                (credito.getEstado() == Estado.APROBADA && nuevoEstado == Estado.EN_DESEMBOLSO)) {
+
+            credito.setEstado(nuevoEstado);
+        } else {
+            throw new IllegalStateException("Cambio de estado no permitido desde " + this.estado + " a " + nuevoEstado);
+        }
+        creditoRepository.save(credito);
+        return credito;
+    }
+
+    public boolean eliminaCredito(Long id) throws Exception {
+        try{
+            creditoRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+
     }
 }

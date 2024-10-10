@@ -19,11 +19,15 @@ public class CreditoEntity {
     @Column(unique = true, nullable = false)
     private Long id;
     private String rut; //para saber el cliente que ha solicitado ese credito, no se si hace fala realmente
+    @Column(name = "plazo", nullable = false)
     private int plazo;
+    @Column(name = "tasaInteres", nullable = false)
     private double tasaInteres;
+    @Column(name = "monto", nullable = false)
     private double monto;
+    @Column(name = "tipoPrestamo", nullable = false)
     private TipoPrestamo tipoPrestamo;
     private double valorPropiedad;
     private double cuotaMensual; // no estoy segura de que haya que incluir aqui la cuota mensual
-    private Estado estado;
+    private Estado estado = Estado.EN_REVISION_INICIAL; //por defecto se inicializa este valor
 }
