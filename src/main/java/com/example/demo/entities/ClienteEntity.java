@@ -20,13 +20,13 @@ public class ClienteEntity {
     private String rut;
     private String nombre;
     private String apellidos;
+    private int edad;
     private double ingresos;
     private boolean esMoroso; // se obtiene a traves del historial crediticio
     private boolean esIndependiente;
     private boolean esEstable;
     private int antiguedadLaboral;
     private double deudaTotal;
-    private int edad;
     private String capacidadAhorro;
     private double saldo; //Saldo en la cuenta de ahorros
     private double mayorRetiro12; //mayor retiro en los ultimos 12 meses
@@ -35,6 +35,5 @@ public class ClienteEntity {
     private double mayorRetiro6;// mayor retiro del cliente en los ultimos 6 meses
     private boolean depositoRegular; // si ingresa cada mes o cada trimestre, en los ultimos 12 meses
     private double totalDepositos; //suma total de los depositos en los últimos 12 meses
-
 
 }

@@ -1,12 +1,13 @@
 package com.example.demo.controllers;
 
 import com.example.demo.Estado;
-import com.example.demo.TipoPrestamo;
 import com.example.demo.entities.CreditoEntity;
 import com.example.demo.services.CreditoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/credito")
@@ -50,5 +51,11 @@ public class CreditoController {
     public ResponseEntity<Boolean> eliminaId(@PathVariable Long id) throws Exception {
         var isDeleted = creditoService.eliminaCredito(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<CreditoEntity>> listaCreditos() {
+        List<CreditoEntity> creditos = creditoService.getCreditos();
+        return ResponseEntity.ok(creditos);
     }
 }

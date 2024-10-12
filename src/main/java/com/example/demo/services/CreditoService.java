@@ -8,6 +8,8 @@ import com.example.demo.repositories.CreditoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 public class CreditoService {
     @Autowired
@@ -16,6 +18,10 @@ public class CreditoService {
     ClienteRepository clienteRepository;
     @Autowired
     DocumentacionService documentacionService;
+
+    public ArrayList<CreditoEntity> getCreditos(){
+        return (ArrayList<CreditoEntity>) creditoRepository.findAll();
+    }
 
     //Hay que poner condiciones en cuanto al monto y el resto de parametros? o es se pone en otro lado??
     public CreditoEntity calculaSimulacion (CreditoEntity simulacion){
