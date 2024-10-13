@@ -60,12 +60,12 @@ public class CreditoService {
             credito.setEstado(Estado.RECHAZADA);
             return credito;
         }
-        if(cliente.isEsMoroso()){
+        if(cliente.getEsMoroso()){
             credito.setEstado(Estado.RECHAZADA);
             return credito;
         }
-        if(cliente.isEsIndependiente()){
-            if(!cliente.isEsEstable()){
+        if(cliente.getEsIndependiente()){
+            if(!cliente.getEsEstable()){
                 credito.setEstado(Estado.RECHAZADA);
                 return credito;
             }
@@ -115,13 +115,13 @@ public class CreditoService {
         }
         //historial de ahorro  --> saldo positivo en su cuenta de ahorros durante los últimos 12 meses
         //sin retiros > 50% del saldo.
-        if(cliente.isSaldoPositivo()){
+        if(cliente.getSaldoPositivo()){
             if(cliente.getMayorRetiro12()>cliente.getSaldo()*0.5){
                 requisitos++;
             }
         }
         //depositos periodicos
-        if(cliente.isDepositoRegular()){
+        if(cliente.getDepositoRegular()){
             if(cliente.getTotalDepositos()>=0.05*cliente.getIngresos()){
                 requisitos++;
             }
