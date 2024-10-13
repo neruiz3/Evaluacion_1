@@ -17,23 +17,24 @@ public class ClienteEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Long id;
+
     private String rut;
     private String nombre;
     private String apellidos;
     private int edad;
-    private double ingresos;
-    private boolean esMoroso; // se obtiene a traves del historial crediticio
-    private boolean esIndependiente;
-    private boolean esEstable;
-    private int antiguedadLaboral;
-    private double deudaTotal;
+    private Double ingresos;
+    private Boolean esMoroso; // se obtiene a traves del historial crediticio
+    private Boolean esIndependiente;
+    private Boolean esEstable;
+    private Integer antiguedadLaboral;
+    private Double deudaTotal;
     private String capacidadAhorro;
-    private double saldo; //Saldo en la cuenta de ahorros
-    private double mayorRetiro12; //mayor retiro en los ultimos 12 meses
-    private boolean saldoPositivo; //saldo positivo en los ultimos 12 meses
-    private int tiempoCuentaAhorros;
-    private double mayorRetiro6;// mayor retiro del cliente en los ultimos 6 meses
-    private boolean depositoRegular; // si ingresa cada mes o cada trimestre, en los ultimos 12 meses
-    private double totalDepositos; //suma total de los depositos en los últimos 12 meses
+    private Double saldo; //Saldo en la cuenta de ahorros
+    private Double mayorRetiro12; //mayor retiro en los ultimos 12 meses
+    private Boolean saldoPositivo; //saldo positivo en los ultimos 12 meses
+    private Integer tiempoCuentaAhorros;
+    private Double mayorRetiro6;// mayor retiro del cliente en los ultimos 6 meses
+    private Boolean depositoRegular; // si ingresa cada mes o cada trimestre, en los ultimos 12 meses
+    private Double totalDepositos; //suma total de los depositos en los últimos 12 meses
 
 }
