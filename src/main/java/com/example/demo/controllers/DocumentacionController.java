@@ -15,6 +15,12 @@ public class DocumentacionController {
     @Autowired
     DocumentacionService documentacionService;
 
+    @PostMapping("/")
+    public ResponseEntity<DocumentacionEntity> nuevoDocumento(@RequestBody DocumentacionEntity documento) {
+        DocumentacionEntity nuevoDocumento = documentacionService.guardaDocumento(documento);
+        return ResponseEntity.ok(nuevoDocumento);
+    }
+
 
 }
 

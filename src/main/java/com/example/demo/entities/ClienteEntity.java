@@ -28,7 +28,7 @@ public class ClienteEntity {
     private Boolean esEstable;
     private Integer antiguedadLaboral;
     private Double deudaTotal;
-    private String capacidadAhorro;
+    private String capacidadAhorro; //la establece el sistema
     private Double saldo; //Saldo en la cuenta de ahorros
     private Double mayorRetiro12; //mayor retiro en los ultimos 12 meses
     private Boolean saldoPositivo; //saldo positivo en los ultimos 12 meses

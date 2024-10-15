@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.TipoPrestamo;
+import com.example.demo.entities.ClienteEntity;
 import com.example.demo.entities.DocumentacionEntity;
 import com.example.demo.repositories.ClienteRepository;
 import com.example.demo.repositories.DocumentacionRepository;
@@ -43,6 +44,8 @@ public class DocumentacionService {
         }
         return false;
     }
+
+    public DocumentacionEntity guardaDocumento(DocumentacionEntity documento) {return documentacionRepository.save(documento);}
 
 
 

@@ -39,7 +39,7 @@ public class ClienteController {
         return ResponseEntity.ok(cliente);
     }
 
-    @GetMapping("/{rut}")
+    @GetMapping("/rut/{rut}")
     public ResponseEntity<ClienteEntity> getClienteByRut(@PathVariable String rut) {
         ClienteEntity cliente = clienteService.getClienteByRut(rut);
         return ResponseEntity.ok(cliente);
