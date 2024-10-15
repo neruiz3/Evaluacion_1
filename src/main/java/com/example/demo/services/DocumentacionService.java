@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DocumentacionService {
@@ -16,7 +17,8 @@ public class DocumentacionService {
     DocumentacionRepository documentacionRepository;
 
     public boolean compruebaDocumentos (TipoPrestamo tipoPrestamo, String rutCliente) {
-        DocumentacionEntity documentos = documentacionRepository.findByRut(rutCliente);
+
+        DocumentacionEntity documentos = documentacionRepository.findByRut(rutCliente).get();
         if (!(documentos.getComprobanteIngresos().length > 0 && documentos.getCertificadoAvaluo().length > 0)) {
             return false;
         }
@@ -45,7 +47,13 @@ public class DocumentacionService {
         return false;
     }
 
-    public DocumentacionEntity guardaDocumento(DocumentacionEntity documento) {return documentacionRepository.save(documento);}
+    public DocumentacionEntity guardaDocumento(DocumentacionEntity documento) {
+        return documentacionRepository.save(documento);
+    }
+
+    public Optional<DocumentacionEntity> getByRut(String rut) {
+        return documentacionRepository.findByRut(rut);
+    }
 
 
 

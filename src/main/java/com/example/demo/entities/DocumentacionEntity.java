@@ -37,6 +37,15 @@ public class DocumentacionEntity {
     //presupuesto de la remodelacion
     @Lob
     private byte[] presupuestoRemodelacion;
+    @Lob
+    private byte[] certificadoAntiguedadLaboral;
+    @Lob
+    private byte[] informeDeudas;
+    @Lob
+    private byte[] fotocopiaRut;
+    @Lob
+    private byte[] cuentaAhorros;
+
 
     //lo siguiente, lo marca el cliente pero lo puede modificar el ejecutivo en funcion de lo que vea en los documentos
     //pero de momento lo voy a dejar en cliente
