@@ -17,18 +17,25 @@ public class DocumentacionEntity {
     private Long id;
     private String rut;
     //comprobante de ingresos
+    @Lob
     private byte[] comprobanteIngresos;
     //escritura primera vivienda
+    @Lob
     private byte[] escrituraVivienda;
     //Historial crediticio
+    @Lob
     private byte[] historialCrediticio;
     //Certificado avaluo
+    @Lob
     private byte[] certificadoAvaluo;
     //estado financiero del negocio
+    @Lob
     private byte[] estadoNegocio;
     //plan de negocios
+    @Lob
     private byte[] planNegocio;
     //presupuesto de la remodelacion
+    @Lob
     private byte[] presupuestoRemodelacion;
 
     //lo siguiente, lo marca el cliente pero lo puede modificar el ejecutivo en funcion de lo que vea en los documentos
