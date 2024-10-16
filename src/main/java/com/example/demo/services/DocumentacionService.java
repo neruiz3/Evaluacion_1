@@ -8,6 +8,8 @@ import com.example.demo.repositories.DocumentacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +50,24 @@ public class DocumentacionService {
     }
 
     public DocumentacionEntity guardaDocumento(DocumentacionEntity documento) {
+        return documentacionRepository.save(documento);
+    }
+
+    public DocumentacionEntity actualizaDocumento(DocumentacionEntity documento) {
+        DocumentacionEntity docAntes = documentacionRepository.findByRut(documento.getRut()).get();
+
+        if (docAntes.getComprobanteIngresos() != null) documento.setComprobanteIngresos(docAntes.getComprobanteIngresos());
+        if (docAntes.getEscrituraVivienda() != null) documento.setEscrituraVivienda(docAntes.getEscrituraVivienda());
+        if (docAntes.getHistorialCrediticio() != null) documento.setHistorialCrediticio(docAntes.getHistorialCrediticio());
+        if (docAntes.getCertificadoAvaluo() != null) documento.setCertificadoAvaluo(docAntes.getCertificadoAvaluo());
+        if (docAntes.getEstadoNegocio() != null) documento.setEstadoNegocio(docAntes.getEstadoNegocio());
+        if (docAntes.getPlanNegocio() != null) documento.setPlanNegocio(docAntes.getPlanNegocio());
+        if (docAntes.getPresupuestoRemodelacion() != null) documento.setPresupuestoRemodelacion(docAntes.getPresupuestoRemodelacion());
+        if (docAntes.getCertificadoAntiguedadLaboral() != null) documento.setCertificadoAntiguedadLaboral(docAntes.getCertificadoAntiguedadLaboral());
+        if (docAntes.getInformeDeudas() != null) documento.setInformeDeudas(docAntes.getInformeDeudas());
+        if (docAntes.getFotocopiaRut() != null) documento.setFotocopiaRut(docAntes.getFotocopiaRut());
+        if (docAntes.getCuentaAhorros() != null) documento.setCuentaAhorros(docAntes.getCuentaAhorros());
+
         return documentacionRepository.save(documento);
     }
 

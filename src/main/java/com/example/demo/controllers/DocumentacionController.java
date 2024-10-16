@@ -55,6 +55,39 @@ public class DocumentacionController {
         return ResponseEntity.ok(nuevoDocumento);
     }
 
+    @PostMapping("/actualiza")
+    public ResponseEntity<DocumentacionEntity> actualizaDocumento(
+            @RequestParam("rut") String rut,
+            @RequestParam(value = "comprobanteIngresos", required = false) MultipartFile comprobanteIngresos,
+            @RequestParam(value = "escrituraVivienda", required = false) MultipartFile escrituraVivienda,
+            @RequestParam(value = "historialCrediticio", required = false) MultipartFile historialCrediticio,
+            @RequestParam(value = "certificadoAvaluo", required = false) MultipartFile certificadoAvaluo,
+            @RequestParam(value = "estadoNegocio", required = false) MultipartFile estadoNegocio,
+            @RequestParam(value = "planNegocio", required = false) MultipartFile planNegocio,
+            @RequestParam(value = "presupuestoRemodelacion", required = false) MultipartFile presupuestoRemodelacion,
+            @RequestParam(value = "certificadoAntiguedadLaboral", required = false) MultipartFile certificadoAntiguedadLaboral,
+            @RequestParam(value = "informeDeudas", required = false) MultipartFile informeDeudas,
+            @RequestParam(value = "fotocopiaRut", required = false) MultipartFile fotocopiaRut,
+            @RequestParam(value = "cuentaAhorros", required = false) MultipartFile cuentaAhorros
+    ) throws IOException {
+        DocumentacionEntity documento = new DocumentacionEntity();
+        documento.setRut(rut);
+        if (comprobanteIngresos != null) documento.setComprobanteIngresos(comprobanteIngresos.getBytes());
+        if (escrituraVivienda != null) documento.setEscrituraVivienda(escrituraVivienda.getBytes());
+        if (historialCrediticio != null) documento.setHistorialCrediticio(historialCrediticio.getBytes());
+        if (certificadoAvaluo != null) documento.setCertificadoAvaluo(certificadoAvaluo.getBytes());
+        if (estadoNegocio != null) documento.setEstadoNegocio(estadoNegocio.getBytes());
+        if (planNegocio != null) documento.setPlanNegocio(planNegocio.getBytes());
+        if (presupuestoRemodelacion != null) documento.setPresupuestoRemodelacion(presupuestoRemodelacion.getBytes());
+        if (certificadoAntiguedadLaboral != null) documento.setCertificadoAntiguedadLaboral(certificadoAntiguedadLaboral.getBytes());
+        if (informeDeudas != null) documento.setInformeDeudas(informeDeudas.getBytes());
+        if (fotocopiaRut != null) documento.setFotocopiaRut(fotocopiaRut.getBytes());
+        if (cuentaAhorros != null) documento.setCuentaAhorros(cuentaAhorros.getBytes());
+
+        DocumentacionEntity nuevoDocumento = documentacionService.actualizaDocumento(documento);
+        return ResponseEntity.ok(nuevoDocumento);
+    }
+
 
     @GetMapping("/{rut}")
     public ResponseEntity<VisualizarDoc> obtenerDocumentacionPorRut(@PathVariable String rut) {
@@ -80,6 +113,5 @@ public class DocumentacionController {
             return ResponseEntity.notFound().build();
         }
     }
-
 
 }
