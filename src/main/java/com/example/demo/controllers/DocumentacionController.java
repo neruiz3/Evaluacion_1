@@ -73,6 +73,7 @@ public class DocumentacionController {
     ) throws IOException {
         DocumentacionEntity documento = new DocumentacionEntity();
         documento.setRut(rut);
+        documento.setId(id);
         if (comprobanteIngresos != null) documento.setComprobanteIngresos(comprobanteIngresos.getBytes());
         if (escrituraVivienda != null) documento.setEscrituraVivienda(escrituraVivienda.getBytes());
         if (historialCrediticio != null) documento.setHistorialCrediticio(historialCrediticio.getBytes());

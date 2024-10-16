@@ -56,19 +56,19 @@ public class DocumentacionService {
     public DocumentacionEntity actualizaDocumento(DocumentacionEntity documento) {
         DocumentacionEntity docAntes = documentacionRepository.findByRut(documento.getRut()).get();
 
-        if (docAntes.getComprobanteIngresos() != null) documento.setComprobanteIngresos(docAntes.getComprobanteIngresos());
-        if (docAntes.getEscrituraVivienda() != null) documento.setEscrituraVivienda(docAntes.getEscrituraVivienda());
-        if (docAntes.getHistorialCrediticio() != null) documento.setHistorialCrediticio(docAntes.getHistorialCrediticio());
-        if (docAntes.getCertificadoAvaluo() != null) documento.setCertificadoAvaluo(docAntes.getCertificadoAvaluo());
-        if (docAntes.getEstadoNegocio() != null) documento.setEstadoNegocio(docAntes.getEstadoNegocio());
-        if (docAntes.getPlanNegocio() != null) documento.setPlanNegocio(docAntes.getPlanNegocio());
-        if (docAntes.getPresupuestoRemodelacion() != null) documento.setPresupuestoRemodelacion(docAntes.getPresupuestoRemodelacion());
-        if (docAntes.getCertificadoAntiguedadLaboral() != null) documento.setCertificadoAntiguedadLaboral(docAntes.getCertificadoAntiguedadLaboral());
-        if (docAntes.getInformeDeudas() != null) documento.setInformeDeudas(docAntes.getInformeDeudas());
-        if (docAntes.getFotocopiaRut() != null) documento.setFotocopiaRut(docAntes.getFotocopiaRut());
-        if (docAntes.getCuentaAhorros() != null) documento.setCuentaAhorros(docAntes.getCuentaAhorros());
+        if (documento.getComprobanteIngresos() != null) docAntes.setComprobanteIngresos(documento.getComprobanteIngresos());
+        if (documento.getEscrituraVivienda() != null) docAntes.setEscrituraVivienda(documento.getEscrituraVivienda());
+        if (documento.getHistorialCrediticio() != null) docAntes.setHistorialCrediticio(documento.getHistorialCrediticio());
+        if (documento.getCertificadoAvaluo() != null) docAntes.setCertificadoAvaluo(documento.getCertificadoAvaluo());
+        if (documento.getEstadoNegocio() != null) docAntes.setEstadoNegocio(documento.getEstadoNegocio());
+        if (documento.getPlanNegocio() != null) docAntes.setPlanNegocio(documento.getPlanNegocio());
+        if (documento.getPresupuestoRemodelacion() != null) docAntes.setPresupuestoRemodelacion(documento.getPresupuestoRemodelacion());
+        if (documento.getCertificadoAntiguedadLaboral() != null) docAntes.setCertificadoAntiguedadLaboral(documento.getCertificadoAntiguedadLaboral());
+        if (documento.getInformeDeudas() != null) docAntes.setInformeDeudas(documento.getInformeDeudas());
+        if (documento.getFotocopiaRut() != null) docAntes.setFotocopiaRut(documento.getFotocopiaRut());
+        if (documento.getCuentaAhorros() != null) docAntes.setCuentaAhorros(documento.getCuentaAhorros());
 
-        return documentacionRepository.save(documento);
+        return documentacionRepository.save(docAntes);
     }
 
     public Optional<DocumentacionEntity> getByRut(String rut) {
