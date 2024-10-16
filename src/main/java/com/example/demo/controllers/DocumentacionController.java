@@ -57,6 +57,7 @@ public class DocumentacionController {
 
     @PostMapping("/actualiza")
     public ResponseEntity<DocumentacionEntity> actualizaDocumento(
+            @RequestParam("id") Long id,
             @RequestParam("rut") String rut,
             @RequestParam(value = "comprobanteIngresos", required = false) MultipartFile comprobanteIngresos,
             @RequestParam(value = "escrituraVivienda", required = false) MultipartFile escrituraVivienda,
