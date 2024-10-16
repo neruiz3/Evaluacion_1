@@ -1,14 +1,21 @@
 package com.example.demo.services;
 
 import com.example.demo.Estado;
+import com.example.demo.TipoPrestamo;
+import com.example.demo.TipoPrestamoDTO;
 import com.example.demo.entities.ClienteEntity;
 import com.example.demo.entities.CreditoEntity;
 import com.example.demo.repositories.ClienteRepository;
 import com.example.demo.repositories.CreditoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CreditoService {
@@ -21,6 +28,10 @@ public class CreditoService {
 
     public ArrayList<CreditoEntity> getCreditos(){
         return (ArrayList<CreditoEntity>) creditoRepository.findAll();
+    }
+
+    public ArrayList<CreditoEntity> getCreditosCliente(String rut){
+        return (ArrayList<CreditoEntity>) creditoRepository.findByRut(rut);
     }
 
     //Hay que poner condiciones en cuanto al monto y el resto de parametros? o es se pone en otro lado??
@@ -198,5 +209,29 @@ public class CreditoService {
         double costoMensual = credito.getCuotaMensual()+seguro;
         double costoTotal = costoMensual*12+admin;
         return costoTotal;
+    }
+
+
+    public List<TipoPrestamoDTO> obtenerTiposPrestamo() {
+        return List.of(TipoPrestamo.values()).stream()
+                .map(this::mapearEnumADTO)
+                .collect(Collectors.toList());
+    }
+
+    private TipoPrestamoDTO mapearEnumADTO(TipoPrestamo tipo) {
+        return new TipoPrestamoDTO(
+                tipo.name(),
+                tipo.getPlazoMaximo(),
+                tipo.getMontoMaximo(),
+                tipo.getTasaInteresMinima(),
+                tipo.getTasaInteresMaxima(),
+                tipo.isComprobanteIngreso(),
+                tipo.isCertificadoAvaluo(),
+                tipo.isHistorialCrediticio(),
+                tipo.isEscrituraVivienda(),
+                tipo.isEstadoFinanciero(),
+                tipo.isPlanNegocios(),
+                tipo.isPresupuestoRemodelacion()
+        );
     }
 }

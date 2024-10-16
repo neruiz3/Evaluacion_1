@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor //genera un constructor sin argumentos para la clase
 @AllArgsConstructor //constructor con todos los argumentos de la clase, por si se los pasas
-public class VisualizarDoc {
+public class DocumentacionDTO {
     private Long id;
     private String rut;
     private String comprobanteIngresos;

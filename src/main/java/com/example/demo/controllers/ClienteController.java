@@ -44,8 +44,4 @@ public class ClienteController {
         ClienteEntity cliente = clienteService.getClienteByRut(rut);
         return ResponseEntity.ok(cliente);
     }
-
-
-
-
 }

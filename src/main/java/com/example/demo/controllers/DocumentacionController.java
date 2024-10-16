@@ -1,11 +1,8 @@
 package com.example.demo.controllers;
 
-import com.example.demo.VisualizarDoc;
-import com.example.demo.entities.ClienteEntity;
+import com.example.demo.DocumentacionDTO;
 import com.example.demo.entities.DocumentacionEntity;
-import com.example.demo.services.ClienteService;
 import com.example.demo.services.DocumentacionService;
-import jakarta.persistence.Lob;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -92,11 +89,11 @@ public class DocumentacionController {
 
 
     @GetMapping("/{rut}")
-    public ResponseEntity<VisualizarDoc> obtenerDocumentacionPorRut(@PathVariable String rut) {
+    public ResponseEntity<DocumentacionDTO> obtenerDocumentacionPorRut(@PathVariable String rut) {
         Optional<DocumentacionEntity> documentoOpt = documentacionService.getByRut(rut);
         if (documentoOpt.isPresent()) {
             DocumentacionEntity documento = documentoOpt.get();
-            VisualizarDoc dto = new VisualizarDoc();
+            DocumentacionDTO dto = new DocumentacionDTO();
             dto.setId(documento.getId());
             dto.setRut(documento.getRut());
             dto.setComprobanteIngresos(documento.getComprobanteIngresos() != null ? Base64.getEncoder().encodeToString(documento.getComprobanteIngresos()) : null);

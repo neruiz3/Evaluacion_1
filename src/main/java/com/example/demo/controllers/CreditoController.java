@@ -1,12 +1,15 @@
 package com.example.demo.controllers;
 
 import com.example.demo.Estado;
+import com.example.demo.TipoPrestamo;
+import com.example.demo.TipoPrestamoDTO;
 import com.example.demo.entities.CreditoEntity;
 import com.example.demo.services.CreditoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -19,12 +22,15 @@ public class CreditoController {
 
     //funcion para solicitar el credito: primero hay que crear un expediente para cada credito
     @PostMapping("/")
-    public ResponseEntity<CreditoEntity> nuevaSolicitud(@RequestBody CreditoEntity solicitud) {
+    public ResponseEntity<CreditoEntity> nuevaSolicitud(@RequestParam("monto") double monto,
+                                                        @RequestParam("plazo") int month,
+                                                        @RequestParam("tasaInteres") int year,
+                                                        @RequestParam("tipoPrestamo") String month) {
         CreditoEntity nuevaSolicitud = creditoService.creaExpediente(solicitud);
         return ResponseEntity.ok(nuevaSolicitud);
     }
 
-    @GetMapping("/calculaSimulacion")
+    @PostMapping("/calculaSimulacion")
     public ResponseEntity<CreditoEntity> calculaSimulacion(@RequestBody CreditoEntity simulacion) {
         CreditoEntity credito = creditoService.calculaSimulacion(simulacion);
         return ResponseEntity.ok(credito);
@@ -56,6 +62,24 @@ public class CreditoController {
     @GetMapping("/")
     public ResponseEntity<List<CreditoEntity>> listaCreditos() {
         List<CreditoEntity> creditos = creditoService.getCreditos();
+        if (creditos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(creditos);
+    }
+
+    @GetMapping("/cliente/{rut}")
+    public ResponseEntity<List<CreditoEntity>> listaCreditosCliente(@PathVariable String rut) {
+        List<CreditoEntity> creditos = creditoService.getCreditosCliente(rut);
+        if (creditos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(creditos);
+    }
+
+    @GetMapping("/tipo-prestamo")
+    public List<TipoPrestamoDTO> obtenerTiposPrestamo() {
+        List<TipoPrestamoDTO> prestamos = creditoService.obtenerTiposPrestamo();
+        return prestamos;
     }
 }
