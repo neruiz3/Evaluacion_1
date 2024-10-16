@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.VisualizarDoc;
 import com.example.demo.entities.ClienteEntity;
 import com.example.demo.entities.DocumentacionEntity;
 import com.example.demo.services.ClienteService;
@@ -21,12 +22,6 @@ public class DocumentacionController {
     @Autowired
     DocumentacionService documentacionService;
 
-    /*@PostMapping("/")
-    public ResponseEntity<DocumentacionEntity> nuevoDocumento(@RequestBody DocumentacionEntity documento) {
-        DocumentacionEntity nuevoDocumento = documentacionService.guardaDocumento(documento);
-        return ResponseEntity.ok(nuevoDocumento);
-    }
-*/
     @PostMapping("/")
     public ResponseEntity<DocumentacionEntity> nuevoDocumento(
             @RequestParam("rut") String rut,
@@ -51,8 +46,7 @@ public class DocumentacionController {
         if (estadoNegocio != null) documento.setEstadoNegocio(estadoNegocio.getBytes());
         if (planNegocio != null) documento.setPlanNegocio(planNegocio.getBytes());
         if (presupuestoRemodelacion != null) documento.setPresupuestoRemodelacion(presupuestoRemodelacion.getBytes());
-        if (certificadoAntiguedadLaboral != null)
-            documento.setCertificadoAntiguedadLaboral(certificadoAntiguedadLaboral.getBytes());
+        if (certificadoAntiguedadLaboral != null) documento.setCertificadoAntiguedadLaboral(certificadoAntiguedadLaboral.getBytes());
         if (informeDeudas != null) documento.setInformeDeudas(informeDeudas.getBytes());
         if (fotocopiaRut != null) documento.setFotocopiaRut(fotocopiaRut.getBytes());
         if (cuentaAhorros != null) documento.setCuentaAhorros(cuentaAhorros.getBytes());
@@ -63,14 +57,29 @@ public class DocumentacionController {
 
 
     @GetMapping("/{rut}")
-    public ResponseEntity<DocumentacionEntity> obtenerDocumentacionByRut(@PathVariable String rut) {
-        Optional<DocumentacionEntity> documentacion = documentacionService.getByRut(rut);
-
-        if (documentacion.isEmpty()) {
-            return ResponseEntity.noContent().build();
+    public ResponseEntity<VisualizarDoc> obtenerDocumentacionPorRut(@PathVariable String rut) {
+        Optional<DocumentacionEntity> documentoOpt = documentacionService.getByRut(rut);
+        if (documentoOpt.isPresent()) {
+            DocumentacionEntity documento = documentoOpt.get();
+            VisualizarDoc dto = new VisualizarDoc();
+            dto.setId(documento.getId());
+            dto.setRut(documento.getRut());
+            dto.setComprobanteIngresos(documento.getComprobanteIngresos() != null ? Base64.getEncoder().encodeToString(documento.getComprobanteIngresos()) : null);
+            dto.setEscrituraVivienda(documento.getEscrituraVivienda() != null ? Base64.getEncoder().encodeToString(documento.getEscrituraVivienda()) : null);
+            dto.setHistorialCrediticio(documento.getHistorialCrediticio() != null ? Base64.getEncoder().encodeToString(documento.getHistorialCrediticio()) : null);
+            dto.setCertificadoAvaluo(documento.getCertificadoAvaluo() != null ? Base64.getEncoder().encodeToString(documento.getCertificadoAvaluo()) : null);
+            dto.setEstadoNegocio(documento.getEstadoNegocio() != null ? Base64.getEncoder().encodeToString(documento.getEstadoNegocio()) : null);
+            dto.setPlanNegocio(documento.getPlanNegocio() != null ? Base64.getEncoder().encodeToString(documento.getPlanNegocio()) : null);
+            dto.setPresupuestoRemodelacion(documento.getPresupuestoRemodelacion() != null ? Base64.getEncoder().encodeToString(documento.getPresupuestoRemodelacion()) : null);
+            dto.setCertificadoAntiguedadLaboral(documento.getCertificadoAntiguedadLaboral() != null ? Base64.getEncoder().encodeToString(documento.getCertificadoAntiguedadLaboral()) : null);
+            dto.setInformeDeudas(documento.getInformeDeudas() != null ? Base64.getEncoder().encodeToString(documento.getInformeDeudas()) : null);
+            dto.setFotocopiaRut(documento.getFotocopiaRut() != null ? Base64.getEncoder().encodeToString(documento.getFotocopiaRut()) : null);
+            dto.setCuentaAhorros(documento.getCuentaAhorros() != null ? Base64.getEncoder().encodeToString(documento.getCuentaAhorros()) : null);
+            return ResponseEntity.ok(dto);
         } else {
-            return ResponseEntity.ok(documentacion.get());
+            return ResponseEntity.notFound().build();
         }
     }
+
 
 }
