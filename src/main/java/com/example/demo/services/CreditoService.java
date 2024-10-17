@@ -9,12 +9,9 @@ import com.example.demo.repositories.ClienteRepository;
 import com.example.demo.repositories.CreditoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -180,17 +177,30 @@ public class CreditoService {
         return true;
     }
 
-    public CreditoEntity cambioEstado(CreditoEntity credito, Estado nuevoEstado){
-        if ((credito.getEstado() == Estado.PRE_APROBADA && nuevoEstado == Estado.EN_APROBACION_FINAL) ||
-                (credito.getEstado() == Estado.EN_APROBACION_FINAL && nuevoEstado == Estado.APROBADA) ||
-                (credito.getEstado() == Estado.APROBADA && nuevoEstado == Estado.EN_DESEMBOLSO)) {
-            credito.setEstado(nuevoEstado);
-            creditoRepository.save(credito);
-        } else {
+    public CreditoEntity cambioEstado(Long id, Estado nuevoEstado){
+        CreditoEntity credito = creditoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Crédito no encontrado con ID: " + id));
+
+        if (!transicionPermitida(credito.getEstado(), nuevoEstado)) {
             throw new IllegalStateException("Cambio de estado no permitido desde " + credito.getEstado() + " a " + nuevoEstado);
         }
-        creditoRepository.save(credito);
-        return credito;
+
+        credito.setEstado(nuevoEstado);
+        return creditoRepository.save(credito);
+    }
+
+    private boolean transicionPermitida(Estado estadoActual, Estado nuevoEstado) {
+        if (estadoActual == Estado.EN_REVISION_INICIAL && nuevoEstado == Estado.PENDIENTE_DOCUMENTACION) return true;
+        if (estadoActual == Estado.EN_REVISION_INICIAL && nuevoEstado == Estado.EN_EVALUACION) return true;
+        if (estadoActual == Estado.PENDIENTE_DOCUMENTACION && nuevoEstado == Estado.EN_EVALUACION) return true;
+        if (estadoActual == Estado.EN_EVALUACION && nuevoEstado == Estado.PENDIENTE_DOCUMENTACION) return true;
+        if (estadoActual == Estado.EN_EVALUACION && nuevoEstado == Estado.PRE_APROBADA) return true;
+        if (estadoActual == Estado.EN_EVALUACION && nuevoEstado == Estado.RECHAZADA) return true;
+        if (estadoActual == Estado.PRE_APROBADA && nuevoEstado == Estado.EN_APROBACION_FINAL) return true;
+        if (estadoActual == Estado.EN_APROBACION_FINAL && nuevoEstado == Estado.APROBADA) return true;
+        if (estadoActual == Estado.APROBADA && nuevoEstado == Estado.EN_DESEMBOLSO) return true;
+
+        return nuevoEstado == Estado.CANCELADA_POR_CLIENTE;
     }
 
     public boolean eliminaCredito(Long id) throws Exception {

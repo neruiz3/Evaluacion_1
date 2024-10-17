@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/credito")
@@ -22,10 +23,7 @@ public class CreditoController {
 
     //funcion para solicitar el credito: primero hay que crear un expediente para cada credito
     @PostMapping("/")
-    public ResponseEntity<CreditoEntity> nuevaSolicitud(@RequestParam("monto") double monto,
-                                                        @RequestParam("plazo") int month,
-                                                        @RequestParam("tasaInteres") int year,
-                                                        @RequestParam("tipoPrestamo") String month) {
+    public ResponseEntity<CreditoEntity> nuevaSolicitud(@RequestBody CreditoEntity solicitud) {
         CreditoEntity nuevaSolicitud = creditoService.creaExpediente(solicitud);
         return ResponseEntity.ok(nuevaSolicitud);
     }
@@ -47,9 +45,9 @@ public class CreditoController {
         return ResponseEntity.ok(creditoEvaluado);
     }
 
-    @PutMapping("/aprueba/{estado}")
-    public ResponseEntity<CreditoEntity> cambioEstado(@RequestBody CreditoEntity credito, @PathVariable Estado estado) {
-        CreditoEntity creditoAprobado = creditoService.cambioEstado(credito, estado);
+    @PutMapping("/{id}")
+    public ResponseEntity<CreditoEntity> cambioEstado(@PathVariable Long id,  @RequestBody Estado estado) {
+        CreditoEntity creditoAprobado = creditoService.cambioEstado(id, estado);
         return ResponseEntity.ok(creditoAprobado);
     }
 
