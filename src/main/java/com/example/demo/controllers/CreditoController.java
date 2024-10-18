@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.CostoDTO;
 import com.example.demo.Estado;
 import com.example.demo.TipoPrestamo;
 import com.example.demo.TipoPrestamoDTO;
@@ -86,6 +87,12 @@ public class CreditoController {
     public List<TipoPrestamoDTO> obtenerTiposPrestamo() {
         List<TipoPrestamoDTO> prestamos = creditoService.obtenerTiposPrestamo();
         return prestamos;
+    }
+
+    @PostMapping ("/costoTotal")
+    public CostoDTO costoTotal(@RequestBody CreditoEntity credito) {
+       CostoDTO costos = creditoService.calculaCostoTotal(credito);
+       return costos;
     }
 
 

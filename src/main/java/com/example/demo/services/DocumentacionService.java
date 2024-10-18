@@ -21,7 +21,9 @@ public class DocumentacionService {
     public boolean compruebaDocumentos (TipoPrestamo tipoPrestamo, String rutCliente) {
 
         DocumentacionEntity documentos = documentacionRepository.findByRut(rutCliente).get();
-        if (documentos.getComprobanteIngresos() == null || documentos.getCertificadoAvaluo() == null) {
+        if (documentos.getComprobanteIngresos() == null || documentos.getCertificadoAvaluo() == null ||
+                documentos.getCuentaAhorros() == null || documentos.getFotocopiaRut() == null ||
+                documentos.getInformeDeudas() == null || documentos.getCertificadoAntiguedadLaboral() == null)  {
             return false;
         }
         switch(tipoPrestamo){

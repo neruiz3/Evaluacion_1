@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.CostoDTO;
 import com.example.demo.Estado;
 import com.example.demo.TipoPrestamo;
 import com.example.demo.TipoPrestamoDTO;
@@ -22,6 +23,8 @@ public class CreditoService {
     ClienteRepository clienteRepository;
     @Autowired
     DocumentacionService documentacionService;
+    @Autowired
+    ClienteService clienteService;
 
     public ArrayList<CreditoEntity> getCreditos(){
         return (ArrayList<CreditoEntity>) creditoRepository.findAll();
@@ -43,6 +46,7 @@ public class CreditoService {
 
     public CreditoEntity creaExpediente(CreditoEntity solicitud){
         solicitud.setEstado(Estado.EN_REVISION_INICIAL);
+        solicitud.setCuotaMensual(calcularCuotaMensual(solicitud.getPlazo(), solicitud.getTasaInteres(), solicitud.getMonto()));
         return creditoRepository.save(solicitud);
     }
 
@@ -53,9 +57,14 @@ public class CreditoService {
         //documentacion
         //piden un monto
         //yo creo que eso se podria hacer haciendo que cuandos se meta un credito a la base de datos no puedan estar vacios esos campos
-        credito.setMonto(calcularCuotaMensual(credito.getPlazo(), credito.getTasaInteres(), credito.getMonto()));
+       // credito.setCuotaMensual(calcularCuotaMensual(credito.getPlazo(), credito.getTasaInteres(), credito.getMonto()));
         if(documentacionService.compruebaDocumentos(credito.getTipoPrestamo(), credito.getRut())){
-            credito.setEstado(Estado.EN_EVALUACION);
+            if(clienteService.compruebaCampos(credito.getRut())){
+                credito.setEstado(Estado.EN_EVALUACION);
+            }
+            else{
+                credito.setEstado(Estado.PENDIENTE_DOCUMENTACION);
+            }
         }
         else {
             credito.setEstado(Estado.PENDIENTE_DOCUMENTACION);
@@ -221,13 +230,17 @@ public class CreditoService {
         }
     }
 
-    public double calculaCostoTotal (CreditoEntity credito){
+    public CostoDTO calculaCostoTotal (CreditoEntity credito){
         //calculo cuota mensual, que ya deberia estar calculada porque nada mas crearlo se hace
-        double seguro = credito.getMonto()*0.03 + 20.0; //se suma tambien el de incendio que son 20 dolares
-        double admin = credito.getMonto()*0.01;
-        double costoMensual = credito.getCuotaMensual()+seguro;
-        double costoTotal = costoMensual*12+admin;
-        return costoTotal;
+        CostoDTO costos = new CostoDTO();
+        costos.setCuotaMensual(credito.getCuotaMensual());
+        costos.setSeguroDesgravamen(credito.getMonto()*0.03);
+        costos.setComisionAdmin(credito.getMonto()*0.01);
+        Double costoMensual = costos.getCuotaMensual()+ costos.getSeguroDesgravamen()+costos.getSeguroIncendio();
+        costos.setCostoMensual(costoMensual);
+        double costoTotal = costoMensual*12+ costos.getComisionAdmin();
+        costos.setCostoTotal(costoTotal);
+        return costos;
     }
 
 
