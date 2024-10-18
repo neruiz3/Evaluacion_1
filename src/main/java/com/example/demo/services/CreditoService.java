@@ -31,6 +31,10 @@ public class CreditoService {
         return (ArrayList<CreditoEntity>) creditoRepository.findByRut(rut);
     }
 
+    public CreditoEntity getCredito(Long id){
+        return creditoRepository.findById(id).get();
+    }
+
     //Hay que poner condiciones en cuanto al monto y el resto de parametros? o es se pone en otro lado??
     public CreditoEntity calculaSimulacion (CreditoEntity simulacion){
         simulacion.setCuotaMensual(calcularCuotaMensual(simulacion.getPlazo(), simulacion.getTasaInteres(), simulacion.getMonto()));
@@ -60,43 +64,44 @@ public class CreditoService {
     }
 
     public CreditoEntity evaluacionCredito (CreditoEntity credito){
+        System.out.println("Credito: " + credito.getTipoPrestamo().name());
         credito.setCuotaMensual(calcularCuotaMensual(credito.getPlazo(), credito.getTasaInteres(), credito.getMonto()));
         ClienteEntity cliente = clienteRepository.findByRut(credito.getRut());
 
         double cuotaIngreso = credito.getCuotaMensual()/cliente.getIngresos()*100.0;
         if(cuotaIngreso > 35.0){
             credito.setEstado(Estado.RECHAZADA);
-            return credito;
+            return creditoRepository.save(credito);
         }
         if(cliente.getEsMoroso()){
             credito.setEstado(Estado.RECHAZADA);
-            return credito;
+            return creditoRepository.save(credito);
         }
         if(cliente.getEsIndependiente()){
             if(!cliente.getEsEstable()){
                 credito.setEstado(Estado.RECHAZADA);
-                return credito;
+                return creditoRepository.save(credito);
             }
         }
         else{
             if(cliente.getAntiguedadLaboral()<1){
                 credito.setEstado(Estado.RECHAZADA);
-                return credito;
+                return creditoRepository.save(credito);
             }
         }
         double deuda = cliente.getDeudaTotal()+credito.getCuotaMensual();
         if(deuda > 0.5*cliente.getIngresos()){
             credito.setEstado(Estado.RECHAZADA);
-            return credito;
+            return creditoRepository.save(credito);
         }
         if(!(validacion(credito))){
             credito.setEstado(Estado.RECHAZADA);
-            return credito;
+            return creditoRepository.save(credito);
         }
         int edadFutura = cliente.getEdad()+credito.getPlazo();
         if(edadFutura>70){
             credito.setEstado(Estado.RECHAZADA);
-            return credito;
+            return creditoRepository.save(credito);
         }
         //capacidad de ahorro
         int requisitos = calculaCapacidadAhorro(cliente,credito);
@@ -111,6 +116,7 @@ public class CreditoService {
             cliente.setCapacidadAhorro("moderada"); //rechazar
             credito.setEstado(Estado.EN_EVALUACION);
         }
+        clienteRepository.save(cliente);
         return creditoRepository.save(credito);
     }
 
@@ -161,17 +167,20 @@ public class CreditoService {
     public boolean validacion(CreditoEntity simulacion) {
         // Validar el plazo
         if (simulacion.getPlazo() > simulacion.getTipoPrestamo().getPlazoMaximo()) {
-            throw new IllegalArgumentException("El plazo excede el máximo permitido para este tipo de préstamo.");
+            //throw new IllegalArgumentException("El plazo excede el máximo permitido para este tipo de préstamo.");
+            return false;
         }
         // Validar la tasa de interés
         if (simulacion.getTasaInteres() < simulacion.getTipoPrestamo().getTasaInteresMinima()
                 || simulacion.getTasaInteres() > simulacion.getTipoPrestamo().getTasaInteresMaxima()) {
-            throw new IllegalArgumentException("La tasa de interés está fuera del rango permitido.");
+            //throw new IllegalArgumentException("La tasa de interés está fuera del rango permitido.");
+            return false;
         }
         // Validar el monto
         double montoMax = simulacion.getValorPropiedad()*(simulacion.getTipoPrestamo().getMontoMaximo() / 100.0);
         if (simulacion.getMonto() > montoMax) {
-            throw new IllegalArgumentException("El monto solicitado excede el máximo permitido para este tipo de préstamo.");
+            //throw new IllegalArgumentException("El monto solicitado excede el máximo permitido para este tipo de préstamo.");
+            return false;
         }
 
         return true;

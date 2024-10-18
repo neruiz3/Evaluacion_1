@@ -21,27 +21,27 @@ public class DocumentacionService {
     public boolean compruebaDocumentos (TipoPrestamo tipoPrestamo, String rutCliente) {
 
         DocumentacionEntity documentos = documentacionRepository.findByRut(rutCliente).get();
-        if (!(documentos.getComprobanteIngresos().length > 0 && documentos.getCertificadoAvaluo().length > 0)) {
+        if (documentos.getComprobanteIngresos() == null || documentos.getCertificadoAvaluo() == null) {
             return false;
         }
         switch(tipoPrestamo){
             case PRIMERAVIVIENDA -> {
-                if(documentos.getHistorialCrediticio().length>0){
+                if(documentos.getHistorialCrediticio() != null){
                     return true;
                 }
             }
             case SEGUNDAVIVIENDA -> {
-                if (documentos.getEscrituraVivienda().length > 0 && documentos.getHistorialCrediticio().length > 0) {
+                if (documentos.getEscrituraVivienda() != null && documentos.getHistorialCrediticio() != null) {
                     return true;
                 }
             }
             case COMERCIAL -> {
-                if (documentos.getPlanNegocio().length > 0 && documentos.getEstadoNegocio().length > 0) {
+                if (documentos.getPlanNegocio() != null && documentos.getEstadoNegocio() != null) {
                     return true;
                 }
             }
             case REMODELACION -> {
-                if (documentos.getPresupuestoRemodelacion().length > 0) {
+                if (documentos.getPresupuestoRemodelacion() != null) {
                     return true;
                 }
             }

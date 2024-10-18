@@ -39,7 +39,8 @@ public class CreditoController {
         CreditoEntity creditoRevisadoInicial = creditoService.revisionInicial(credito);
         return ResponseEntity.ok(creditoRevisadoInicial);
     }
-    @PutMapping("/evalua")
+
+    @PutMapping("/evaluar")
     public ResponseEntity<CreditoEntity> evaluaCredito(@RequestBody CreditoEntity credito) {
         CreditoEntity creditoEvaluado = creditoService.evaluacionCredito(credito);
         return ResponseEntity.ok(creditoEvaluado);
@@ -66,6 +67,12 @@ public class CreditoController {
         return ResponseEntity.ok(creditos);
     }
 
+    @GetMapping("/id/{id}")
+    public ResponseEntity<CreditoEntity> getCreditoId(@PathVariable Long id) {
+        CreditoEntity credito = creditoService.getCredito(id);
+        return ResponseEntity.ok(credito);
+    }
+
     @GetMapping("/cliente/{rut}")
     public ResponseEntity<List<CreditoEntity>> listaCreditosCliente(@PathVariable String rut) {
         List<CreditoEntity> creditos = creditoService.getCreditosCliente(rut);
@@ -80,4 +87,6 @@ public class CreditoController {
         List<TipoPrestamoDTO> prestamos = creditoService.obtenerTiposPrestamo();
         return prestamos;
     }
+
+
 }
