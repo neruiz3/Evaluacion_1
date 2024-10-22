@@ -139,7 +139,7 @@ public class CreditoService {
         //historial de ahorro  --> saldo positivo en su cuenta de ahorros durante los últimos 12 meses
         //sin retiros > 50% del saldo.
         if(cliente.getSaldoPositivo()){
-            if(cliente.getMayorRetiro12()>cliente.getSaldo()*0.5){
+            if(cliente.getMayorRetiro12()<cliente.getSaldo()*0.5){
                 requisitos++;
             }
         }

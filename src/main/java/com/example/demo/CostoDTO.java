@@ -11,7 +11,7 @@ public class CostoDTO {
     private Double cuotaMensual;
     private Double comisionAdmin;
     private Double seguroDesgravamen;
-    private Double seguroIncendio = 20.00;
+    private Double seguroIncendio = 20000.00;
     private Double costoMensual;
     private Double costoTotal;
 }

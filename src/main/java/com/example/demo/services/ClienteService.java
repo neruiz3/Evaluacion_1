@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 @Service
 public class ClienteService {
@@ -33,8 +34,9 @@ public class ClienteService {
 
     public Boolean compruebaCampos(String rut){
         ClienteEntity cliente = getClienteByRut(rut);
+        Boolean camposCompletos = false;
 
-        boolean camposCompletos =  cliente.getIngresos() != null &&
+        camposCompletos =  cliente.getIngresos() != null &&
                 cliente.getEsMoroso() != null &&
                 cliente.getEsIndependiente() != null &&
                 cliente.getDeudaTotal() != null &&
@@ -45,14 +47,18 @@ public class ClienteService {
                 cliente.getMayorRetiro6() != null &&
                 cliente.getDepositoRegular() != null;
 
-        if (cliente.getEsIndependiente() && cliente.getEsEstable() == null) {
-            return false;
+        if(cliente.getEsIndependiente()!=null){
+            if (cliente.getEsIndependiente() && cliente.getEsEstable() == null) {
+                return false;
+            }
+            if((!cliente.getEsIndependiente()) && cliente.getAntiguedadLaboral()==null){
+                return false;
+            }
         }
-        if(!cliente.getEsIndependiente() && cliente.getAntiguedadLaboral()==null){
-            return false;
-        }
-        if(cliente.getSaldoPositivo() && cliente.getTotalDepositos()==null){
-            return false;
+        if(cliente.getSaldoPositivo()!=null){
+            if(cliente.getSaldoPositivo() && cliente.getTotalDepositos()==null){
+                return false;
+            }
         }
         return camposCompletos;
     }
