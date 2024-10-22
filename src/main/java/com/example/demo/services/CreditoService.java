@@ -1,9 +1,9 @@
 package com.example.demo.services;
 
-import com.example.demo.CostoDTO;
+import com.example.demo.DTO.CostoDTO;
 import com.example.demo.Estado;
 import com.example.demo.TipoPrestamo;
-import com.example.demo.TipoPrestamoDTO;
+import com.example.demo.DTO.TipoPrestamoDTO;
 import com.example.demo.entities.ClienteEntity;
 import com.example.demo.entities.CreditoEntity;
 import com.example.demo.repositories.ClienteRepository;

@@ -1,18 +1,15 @@
 package com.example.demo.controllers;
 
-import com.example.demo.CostoDTO;
+import com.example.demo.DTO.CostoDTO;
 import com.example.demo.Estado;
-import com.example.demo.TipoPrestamo;
-import com.example.demo.TipoPrestamoDTO;
+import com.example.demo.DTO.TipoPrestamoDTO;
 import com.example.demo.entities.CreditoEntity;
 import com.example.demo.services.CreditoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/credito")
