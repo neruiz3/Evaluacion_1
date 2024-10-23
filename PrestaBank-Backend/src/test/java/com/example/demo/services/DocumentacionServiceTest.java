@@ -6,6 +6,7 @@ import com.example.demo.repositories.ClienteRepository;
 import com.example.demo.repositories.DocumentacionRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.ExpectedCount.times;
 
 @SpringBootTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class DocumentacionServiceTest {
     @MockBean
     DocumentacionRepository documentacionRepository;

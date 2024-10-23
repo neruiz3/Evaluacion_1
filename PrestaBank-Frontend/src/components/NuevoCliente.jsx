@@ -49,7 +49,6 @@ const NuevoCliente = () => {
         .update(cliente)
         .then((response) => {
           console.log("Empleado ha sido actualizado.", response.data);
-          navigate("/clientes/inicio");
         })
         .catch((error) => {
           console.log(

@@ -1,0 +1,143 @@
+services:
+  # Frontend services
+  frontend1:
+    container_name: prestabanco-frontend-container-1
+    image: nerearuiz3/frontend-image:latest
+    ports:
+      - 3001:3000
+    networks:
+      - prestabanco-frontend-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  frontend2:
+    container_name: prestabanco-frontend-container-2
+    image: nerearuiz3/frontend-image:latest
+    ports:
+      - 3002:3000
+    networks:
+      - prestabanco-frontend-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  frontend3:
+    container_name: prestabanco-frontend-container-3
+    image: nerearuiz3/frontend-image:latest
+    ports:
+      - 3003:3000
+    networks:
+      - prestabanco-frontend-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  # Backend services
+  backend1:
+    container_name: prestabanco-backend-container-1
+    image: nerearuiz3/backend-image:latest
+    ports:
+      - 8091:8090
+    environment:
+      DB_HOST: prestabanco-mysql-container
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: prestabanco
+    networks:
+      - prestabanco-backend-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - mysql
+
+  backend2:
+    container_name: prestabanco-backend-container-2
+    image: nerearuiz3/backend-image:latest
+    ports:
+      - 8092:8090
+    environment:
+      DB_HOST: prestabanco-mysql-container
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: prestabanco
+    networks:
+      - prestabanco-backend-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - mysql
+
+  backend3:
+    container_name: prestabanco-backend-container-3
+    image: nerearuiz3/backend-image:latest
+    ports:
+      - 8093:8090
+    environment:
+      DB_HOST: prestabanco-mysql-container
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: prestabanco
+    networks:
+      - prestabanco-backend-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - mysql
+
+  # Nginx for frontend load balancing
+  nginx-frontend:
+    image: nginx:latest
+    container_name: prestabanco-nginx-frontend-container
+    restart: always
+    ports:
+      - 8070:8070
+    volumes:
+      - ./frontend.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend1
+      - frontend2
+      - frontend3
+    networks:
+      - prestabanco-frontend-network
+
+  # Nginx for backend load balancing
+  nginx-backend:
+    image: nginx:latest
+    container_name: prestabanco-nginx-backend-container
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./backend.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+    networks:
+      - prestabanco-backend-network
+
+  # MySQL Database
+  mysql:
+    container_name: prestabanco-mysql-container
+    image: mysql:latest
+    restart: always
+    volumes:
+      - db-volume:/var/lib/mysql  # Asegúrate de que esto sea correcto
+    networks:
+      - prestabanco-backend-network
+    environment:
+      MYSQL_ROOT_PASSWORD: prestabanco
+      MYSQL_DATABASE: evaluacion1-db
+    ports:
+      - "33060:3306"
+
+volumes:
+  db-volume:
+
+networks:
+  prestabanco-frontend-network:
+  prestabanco-backend-network:
