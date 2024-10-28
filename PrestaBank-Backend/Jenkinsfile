@@ -30,21 +30,15 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build and Push Image to Docker Hub') {
             steps {
-                dir('PrestaBank-Backend') {
-                    bat 'docker build -t nerearuiz3/backend-image .'
-                }
-            }
-        }
-
-        stage('Push Image to Docker Hub') {
-            steps {
-                script {
-                    withDockerRegistry(credentialsId: 'docker-credentials') {
-                        bat 'docker login -u mtisw -p %dhpsw%'  // Login en Docker Hub
+                dir('PrestaBank-Backend'){
+                    script {
+                        withDockerRegistry(credentialsId: 'docker-credentials') {
+                            bat 'docker build -t nerearuiz3/backend-image'
+                            bat 'docker push nerearuiz3/backend-image'
+                        }
                     }
-                    bat 'docker push nerearuiz3/backend-image'  // Subir la imagen
                 }
             }
         }
