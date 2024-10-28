@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const Evaluacion1BackendServer = import.meta.env.VITE_EVALUACION1_BACKEND_SERVER;
+const Evaluacion1BackendServer = '104.41.37.114';
 const Evaluacion1BackendPort = import.meta.env.VITE_EVALUACION1_BACKEND_PORT;
 
 console.log(Evaluacion1BackendServer)
