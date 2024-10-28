@@ -16,27 +16,20 @@ pipeline {
 
         stage('Build Maven') {
             steps {
-                dir('PrestaBank-Backend') {  // Bloque 'dir' dentro de 'steps'
-                    bat 'mvn clean package'
-                }
-            }
-        }
-
-        stage('Unit Tests') {
-            steps {
-                dir('PrestaBank-Backend') {  // Ejecutar tests en el subdirectorio correcto
-                    bat 'mvn test'
+                dir('PrestaBank-Frontend') {  // Bloque 'dir' dentro de 'steps'
+                    bat 'npm install'
+                    bat 'npm run build'
                 }
             }
         }
 
         stage('Build and Push Image to Docker Hub') {
             steps {
-                dir('PrestaBank-Backend'){
+                dir('PrestaBank-Frontend'){
                     script {
                         withDockerRegistry(credentialsId: 'docker-credentials') {
-                            bat 'docker build -t nerearuiz3/backend-image .'
-                            bat 'docker push nerearuiz3/backend-image .'
+                            bat 'docker build -t nerearuiz3/frontend-image'
+                            bat 'docker push nerearuiz3/frontend-image'
                         }
                     }
                 }
