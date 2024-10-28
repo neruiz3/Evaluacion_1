@@ -1,45 +1,50 @@
 pipeline {
     agent any
-    tools{
-        maven "maven"
+    tools {
+        maven "maven"  // Definir Maven instalado en Jenkins
     }
-    stages{
-        stage('Build maven'){
-            steps{
-                checkout scmGit(branches: [[name: '*/main']],
-                                extensions: [],
-                                userRemoteConfigs: [[url: 'https://github.com/neruiz3/Evaluacion_1']])
+    stages {
+        stage('Checkout Code') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: '*/main']],
+                    extensions: [],
+                    userRemoteConfigs: [[url: 'https://github.com/neruiz3/Evaluacion_1']]
+                )
             }
-            dir('PrestaBank-Backend') {
-                bat 'mvn clean package'
+        }
+
+        stage('Build Maven') {
+            steps {
+                dir('PrestaBank-Backend') {  // Bloque 'dir' dentro de 'steps'
+                    bat 'mvn clean package'
+                }
             }
         }
 
         stage('Unit Tests') {
             steps {
-                dir('PrestaBank-Backend') {
-                    bat 'mvn test'  // Ejecuta Maven en el directorio correcto
+                dir('PrestaBank-Backend') {  // Ejecutar tests en el subdirectorio correcto
+                    bat 'mvn test'
                 }
-                // Run Maven 'test' phase. It compiles the test sources and runs the unit tests
-                // Use 'bat' for Windows agents or 'sh' for Unix/Linux agents
             }
         }
 
-        stage('Build docker image'){
-            steps{
-                script {
-                    dir('PrestaBank-Backend') {
-                        bat 'docker build -t nerearuiz3/backend-image .'  // Construye la imagen desde este directorio
-                    }
+        stage('Build Docker Image') {
+            steps {
+                dir('PrestaBank-Backend') {
+                    bat 'docker build -t nerearuiz3/backend-image .'
                 }
             }
         }
-        stage('Push image to Docker Hub'){
-            steps{
-                script{
-                   withDockerRegistry(credentialsId: 'docker-credentials') {
-                        bat 'docker push nerearuiz3/backend-image'
-                   }
+
+        stage('Push Image to Docker Hub') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-credentials') {
+                        bat 'docker login -u mtisw -p %dhpsw%'  // Login en Docker Hub
+                    }
+                    bat 'docker push nerearuiz3/backend-image'  // Subir la imagen
                 }
             }
         }
