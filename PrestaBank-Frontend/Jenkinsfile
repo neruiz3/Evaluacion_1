@@ -28,7 +28,7 @@ pipeline {
                 dir('PrestaBank-Frontend'){
                     script {
                         withDockerRegistry(credentialsId: 'docker-credentials') {
-                            bat 'docker build -t nerearuiz3/frontend-image'
+                            bat 'docker build -t nerearuiz3/frontend-image .'
                             bat 'docker push nerearuiz3/frontend-image'
                         }
                     }
