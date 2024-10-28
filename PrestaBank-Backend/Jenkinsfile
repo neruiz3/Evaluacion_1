@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+    tools{
+        maven "maven"
+    }
+    stages{
+        stage('Build maven'){
+            steps{
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/neruiz3/Evaluacion_1/tree/main/PrestaBank-Backend']])
+                bat 'mvn clean package'
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                // Run Maven 'test' phase. It compiles the test sources and runs the unit tests
+                bat 'mvn test' // Use 'bat' for Windows agents or 'sh' for Unix/Linux agents
+            }
+        }
+
+        stage('Build docker image'){
+            steps{
+                script{
+                    bat 'docker build -t nerearuiz3/backend-image .'
+                }
+            }
+        }
+        stage('Push image to Docker Hub'){
+            steps{
+                script{
+                   withDockerRegistry(credentialsId: 'docker-credentials') {
+                        bat 'docker login -u mtisw -p %dhpsw%'
+                   }
+                   bat 'docker push nerearuiz3/backend-image'
+                }
+            }
+        }
+    }
+}
