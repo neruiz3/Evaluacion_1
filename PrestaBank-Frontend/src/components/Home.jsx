@@ -9,7 +9,6 @@ const Home = () => {
           el backend), <a href="https://reactjs.org/">React</a> (para el Frontend)
           y <a href="https://www.mysql.com/products/community/">MySQL</a> (para la
           base de datos).
-          Prueba
         </p>
       </div>
       
